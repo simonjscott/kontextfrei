@@ -226,4 +226,7 @@ private[kontextfrei] trait RDDBaseFunctions
       as: RDD[A])(numPartitions: Int, shuffle: Boolean = false): RDD[A] =
     as.coalesce(numPartitions, shuffle)
 
+  override final def defaultPartitioner[A: ClassTag](
+      as: RDD[A])(others: RDD[_]*): Partitioner =
+    Partitioner.defaultPartitioner(as, others:_*)
 }

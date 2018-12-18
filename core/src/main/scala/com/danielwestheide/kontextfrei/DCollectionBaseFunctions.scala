@@ -188,4 +188,6 @@ private[kontextfrei] trait DCollectionBaseFunctions[DCollection[_]] {
       numPartitions: Int,
       shuffle: Boolean = false): DCollection[A]
 
+  def defaultPartitioner[A: ClassTag](as: DCollection[A])(
+      others: DCollection[_]*): Partitioner
 }

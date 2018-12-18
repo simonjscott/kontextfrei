@@ -205,4 +205,6 @@ class BaseSyntax[DCollection[_], A: ClassTag](
                      shuffle: Boolean = false): DCollection[A] =
     self.coalesce(coll)(numPartitions, shuffle)
 
+  final def defaultPartitioner(others: DCollection[_]*): Partitioner =
+    self.defaultPartitioner(coll)(others:_*)
 }
