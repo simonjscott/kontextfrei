@@ -1,7 +1,7 @@
 package com.danielwestheide.kontextfrei
 
 import org.apache.spark.storage.StorageLevel
-import org.apache.spark.{HashPartitioner, SparkException}
+import org.apache.spark.{HashPartitioner, Partitioner, SparkException}
 import org.scalacheck.Gen
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatest.{DiagrammedAssertions, Inspectors}
@@ -1038,6 +1038,22 @@ trait DCollectionOpsProperties[DColl[_]]
     forAll(Gen.listOfN(4, Gen.alphaStr)) { xs =>
       val result = unit(xs).setName("blah").collect().toList
       assert(result.sorted === xs.sorted)
+    }
+  }
+
+  property("partitionBy doesn't change set of elements") {
+    forAll { (xs: List[(Int, String)]) =>
+      val coll = unit(xs)
+      val partitioner = new HashPartitioner(2)
+      assert(coll.partitionBy(partitioner).collect().toSet === coll.collect().toSet)
+    }
+  }
+
+  property("defaultPartitioner returns a partitioner") {
+    forAll { (xs: List[Int]) =>
+      val coll = unit(xs)
+      val partitioner = coll.defaultPartitioner()
+      assert(partitioner.isInstanceOf[Partitioner])
     }
   }
 
