@@ -8,6 +8,17 @@ private[kontextfrei] trait RDDBase {
 
   def withSite[A, R](as: RDD[A])(body: RDD[A] => R): R = {
 
+    val (method, site) = RDDBase.callSiteInfo
+
+    as.sparkContext.setCallSite(s"$method at $site")
+    body(as)
+  }
+}
+
+object RDDBase {
+
+  def callSiteInfo: (String, String) = {
+
     def isInKf(ste: StackTraceElement): Boolean = {
       Option(ste.getClassName()).exists(_.startsWith("com.danielwestheide.kontextfrei"))
     }
@@ -19,7 +30,6 @@ private[kontextfrei] trait RDDBase {
     val method = kf.lastOption.map(_.getMethodName()).getOrElse("unknown")
     val site = user.headOption.map(s => s"${s.getFileName()}:${s.getLineNumber()}").getOrElse("unknown")
 
-    as.sparkContext.setCallSite(s"$method at $site")
-    body(as)
+    (method, site)
   }
 }
