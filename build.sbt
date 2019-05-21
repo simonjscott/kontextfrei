@@ -23,7 +23,6 @@ val common = Seq(
   crossScalaVersions := scalaVersions(sparkVersion.value),
   licenses += ("Apache-2.0",
   url("https://opensource.org/licenses/Apache-2.0")),
-  bintrayPackageLabels := Seq("scala", "spark", "testing"),
   parallelExecution in Test := false,
   scalacOptions ++= Seq("-feature",
                         "-language:higherKinds",
